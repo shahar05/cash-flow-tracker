@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Centered Button</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+
+        <div id="id-main-container">
+
+            <section id="id-upload-file-section" class="c-active-section">
+                <input type="file" id="id-file-input" />
+                <button  class="c-upload-file-btn" onclick="parseFile()" >Start</button>
+            </section>
+
+            <section id="id-split-to-categories-section">
+                <div class="c-container c-col-direction">
+                    <div class="c-card" id="id-current-trans-container">
+                        <div> <strong>Store:</strong>  <span id="id-trans-merchant-name"></span> </div>
+                        <div> <strong>Amount:</strong>  <span id="id-trans-display-amount"></span> </div>
+                        <div> <strong>Date:</strong>  <span id="id-trans-debt-date"></span> </div>
+                    </div>
+                    <div id="id-category-list-container" class="c-container c-wrap">
+                        <div>
+                            id-category-list-container
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="id-view-category-section">
+
+            </section>
+
+        </div>
+    </body>
+    <script src="js/utils.js"></script>
+    <script src="js/dom-manipulations.js"></script>
+    <script src="js/http.js"></script>
+    <script src="js/categories.js"></script>
+    <script src="js/transaction.js"></script>
+    <script>
+        //UniqueCategories
+        //CategoriesMap
+        //CategoriesMapReversed
+        
+        var globalTransArray = null;
+        var globalTransArrayIndex = 0;
+
+        function parseFile() {  
+            const file = $$('id-file-input')?.files[0];
+            const reader = new FileReader();
+            reader.onload = onLoadFile;
+            reader.readAsText(file);
+            changeSection('id-split-to-categories-section')
+        }
+
+        function onLoadFile(e) {
+            globalTransArray = JSON.parse(e.target.result).result.transactions;
+            displayCurrentTransaction();
+            displayCategories();
+        }
+
+        async function displayCategories() {
+            let catStr = '';
+
+            categories = await getCategories();
+
+            for (const cat of categories) {
+                catStr += `
+                     <div onclick="attachTransaction('${cat}')" class="c-card c-pointer" id="id-category-${cat}" >
+                        ${cat}co
+                    </div>
+                `;
+            }
+
+            $$('id-category-list-container').innerHTML = cat.Str;
+        }
+
+
+
+        function displayCurrentTransaction() {
+            if (!globalTransArray || !globalTransArray.length) {
+                console.error('displayCurrentTransaction: globalTransArray is null');
+                return;
+            }
+
+            const trans = getCurrentTransaction();
+            $$('id-trans-merchant-name').innerHTML = trans.merchantName;
+            $$('id-trans-display-amount').innerHTML = trans.amountForDisplay;
+            $$('id-trans-debt-date').innerHTML = trans.trnPurchaseDate;
+
+            if (alreadyAttached(trans)) {
+                console.log(`Attached: ${trans.merchantName}. CategoryID: ${alreadyAttached(trans)}`);
+            }
+        }
+
+        function alreadyAttached(transaction) {
+            return CategoriesMap[transaction.internationalBranchID];
+        }
+
+        function displayNextTransaction() {
+            const finishedTransactions = incrementTransIndex();
+            if (finishedTransactions) {
+                changeSection('id-category-list-container');
+                return;
+            }
+            displayCurrentTransaction();
+        }
+
+        function getCurrentTransaction() {
+            return globalTransArray[globalTransArrayIndex];
+        }
+
+        function incrementTransIndex() {
+            if (globalTransArrayIndex === globalTransArray.length - 1) {
+                alert("no more array");
+                console.error('displayCurrentTransaction: globalTransArrayIndex >= globalTransArray.length');
+                return true;
+            }
+            globalTransArrayIndex++;
+            return false;
+        }
+
+        /*
+        {
+            "merchantName": "WOLT",
+            "amountForDisplay": 136,
+            "debCrdCurrencyDesc": "שח",
+            "debCrdDate": "2024-05-02T00:00:00",
+            "merchantAddress": "יבנה 40 תל אביב - יפו",
+            "merchantPhoneNo": "03-7631092",
+            "merchantId": "958376",
+            "cardUniqueId": "338994664018201955",
+            "internationalBranchID": "5411"
+        }
+        */
+
+    </script>
+</html>

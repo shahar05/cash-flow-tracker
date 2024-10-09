@@ -1,0 +1,63 @@
+body { display: flex; margin: 0; overflow: hidden; height: 100%; font-size: 14px;}
+
+#id-main-container { flex: 1; min-width: 0; }
+
+#id-main-container section {
+	display: none;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+}
+
+#id-main-container section.c-active-section { display: flex; }
+
+#id-upload-file-section{
+    justify-content: center;
+    align-items: center;
+}
+
+.c-col-direction{
+    flex-direction: column;
+}
+
+.c-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.c-card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    padding: 20px; /* Padding inside the card */
+    margin: 8px;  /* Margin around the card */
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 8px; /* Rounded corners */
+    /* background-color: #fff;  */
+}
+
+.c-pointer{
+    cursor: pointer;
+}
+
+
+.c-wrap{
+    flex-wrap: wrap;
+}
+
+.c-upload-file-btn {
+    padding: 10px 20px;
+    font-size: 18px;
+}
+
+/* body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 18px;
+} */
