@@ -22,6 +22,24 @@ func RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/transactions", GetTransactionsHandler).Methods("GET")
 	r.HandleFunc("/transactions", AddTransactionsHandler).Methods("POST")
 	r.HandleFunc("/attach-transaction", AttachTransactionHandler).Methods("POST")
+	r.HandleFunc("/filter-transactions", FilterTransactionsHandler).Methods("POST")
+}
+
+func FilterTransactionsHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("FilterTransactionsHandler: Handling POST /filter-transactions request")
+	var FullTransArr []FullTransDetail
+	if err := json.NewDecoder(r.Body).Decode(&FullTransArr); err != nil {
+		log.Printf("AttachTransactionHandler: Error decoding AttachTransReq: %v", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	filteredTrans, err := FilterTransactions(FullTransArr)
+	if err != nil {
+		utils.WriteJSONError(w, http.StatusInternalServerError, err.Error())
+	}
+
+	utils.WriteJSONOk(w, filteredTrans)
 }
 
 // GetTransactionsHandler handles GET requests for contacts with pagination
@@ -33,6 +51,7 @@ func AttachTransactionHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 }
 
 // GetTransactionsHandler handles GET requests for contacts with pagination
@@ -59,5 +78,5 @@ func AddTransactionsHandler(w http.ResponseWriter, r *http.Request) {
 
 	trans.ID = id
 	log.Printf("AddTransactionsHandler: Added new transaction with ID: %s", id)
-	utils.WriteJSON200(w, trans)
+	utils.WriteJSONOk(w, trans)
 }

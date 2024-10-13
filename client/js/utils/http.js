@@ -1,4 +1,4 @@
-const baseUrl = "localhost:8080/";
+const baseUrl = "http://localhost:8080/";
 
 async function sendHttpRequest(endpoint, method = 'GET', body = null, headers = {}) {
 

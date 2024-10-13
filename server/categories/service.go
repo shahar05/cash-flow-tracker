@@ -5,6 +5,37 @@ import (
 	"strings"
 )
 
+// GetCategories retrieves all categories from the database
+func GetCategories() ([]Category, error) {
+	// SQL query to select all categories
+	query := "SELECT id, name FROM categories"
+
+	// Execute the query
+	rows, err := DB.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("GetCategories: %v", err)
+	}
+	defer rows.Close()
+
+	var categories []Category
+
+	// Iterate over the result set
+	for rows.Next() {
+		var category Category
+		if err := rows.Scan(&category.ID, &category.Name); err != nil {
+			return nil, fmt.Errorf("GetCategories: %v", err)
+		}
+		categories = append(categories, category)
+	}
+
+	// Check for errors from iterating over rows
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("GetCategories: %v", err)
+	}
+
+	return categories, nil
+}
+
 // AddCategories inserts multiple categories and returns the count of newly inserted categories.
 func AddCategories(categories []Category) (int64, error) {
 	if len(categories) == 0 {

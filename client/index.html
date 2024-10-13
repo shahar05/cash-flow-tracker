@@ -36,107 +36,19 @@
 
         </div>
     </body>
-    <script src="js/utils.js"></script>
-    <script src="js/dom-manipulations.js"></script>
-    <script src="js/http.js"></script>
-    <script src="js/categories.js"></script>
-    <script src="js/transaction.js"></script>
-    <script>
-        //UniqueCategories
-        //CategoriesMap
-        //CategoriesMapReversed
-        
-        var globalTransArray = null;
-        var globalTransArrayIndex = 0;
 
-        function parseFile() {  
-            const file = $$('id-file-input')?.files[0];
-            const reader = new FileReader();
-            reader.onload = onLoadFile;
-            reader.readAsText(file);
-            changeSection('id-split-to-categories-section')
-        }
+    <!-- *** Utils *** -->
+    <script src="js/utils/dom-utils.js"></script>
+    <script src="js/utils/dom-manipulations.js"></script>
+    <script src="js/utils/http.js"></script>
+    <script src="js/utils/global.js"></script>
+    
 
-        function onLoadFile(e) {
-            globalTransArray = JSON.parse(e.target.result).result.transactions;
-            displayCurrentTransaction();
-            displayCategories();
-        }
+    <!-- *** Pages *** -->
+    <script src="js/pages/upload-data.js"></script>
 
-        async function displayCategories() {
-            let catStr = '';
-
-            categories = await getCategories();
-
-            for (const cat of categories) {
-                catStr += `
-                     <div onclick="attachTransaction('${cat}')" class="c-card c-pointer" id="id-category-${cat}" >
-                        ${cat}co
-                    </div>
-                `;
-            }
-
-            $$('id-category-list-container').innerHTML = cat.Str;
-        }
-
-
-
-        function displayCurrentTransaction() {
-            if (!globalTransArray || !globalTransArray.length) {
-                console.error('displayCurrentTransaction: globalTransArray is null');
-                return;
-            }
-
-            const trans = getCurrentTransaction();
-            $$('id-trans-merchant-name').innerHTML = trans.merchantName;
-            $$('id-trans-display-amount').innerHTML = trans.amountForDisplay;
-            $$('id-trans-debt-date').innerHTML = trans.trnPurchaseDate;
-
-            if (alreadyAttached(trans)) {
-                console.log(`Attached: ${trans.merchantName}. CategoryID: ${alreadyAttached(trans)}`);
-            }
-        }
-
-        function alreadyAttached(transaction) {
-            return CategoriesMap[transaction.internationalBranchID];
-        }
-
-        function displayNextTransaction() {
-            const finishedTransactions = incrementTransIndex();
-            if (finishedTransactions) {
-                changeSection('id-category-list-container');
-                return;
-            }
-            displayCurrentTransaction();
-        }
-
-        function getCurrentTransaction() {
-            return globalTransArray[globalTransArrayIndex];
-        }
-
-        function incrementTransIndex() {
-            if (globalTransArrayIndex === globalTransArray.length - 1) {
-                alert("no more array");
-                console.error('displayCurrentTransaction: globalTransArrayIndex >= globalTransArray.length');
-                return true;
-            }
-            globalTransArrayIndex++;
-            return false;
-        }
-
-        /*
-        {
-            "merchantName": "WOLT",
-            "amountForDisplay": 136,
-            "debCrdCurrencyDesc": "שח",
-            "debCrdDate": "2024-05-02T00:00:00",
-            "merchantAddress": "יבנה 40 תל אביב - יפו",
-            "merchantPhoneNo": "03-7631092",
-            "merchantId": "958376",
-            "cardUniqueId": "338994664018201955",
-            "internationalBranchID": "5411"
-        }
-        */
-
-    </script>
+    <!-- *** Models *** -->
+    <script src="js/models/categories.js"></script>
+    <script src="js/models/transaction.js"></script>
+    
 </html>

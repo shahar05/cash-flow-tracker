@@ -25,7 +25,17 @@ func RegisterRoutes(r *mux.Router) {
 
 // GetCategoriesHandler handles GET requests for contacts with pagination
 func GetCategoriesHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("GetCategoriesHandler: Handling POST /Categories request")
 
+	cats, err := GetCategories()
+	if err != nil {
+		log.Printf("GetCategoriesHandler: Error adding transaction: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("GetCategoriesHandler: sending categories")
+	utils.WriteJSONOk(w, cats)
 }
 
 // AddCategoriesHandler handles POST requests to add a new transaction
@@ -46,5 +56,5 @@ func AddCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("AddCategoriesHandler: Added %d new categories", successfullyInserted)
-	utils.WriteJSON200(w, map[string]int64{"successfullyInserted": successfullyInserted})
+	utils.WriteJSONOk(w, map[string]int64{"successfullyInserted": successfullyInserted})
 }
