@@ -49,15 +49,93 @@ body { display: flex; margin: 0; overflow: hidden; height: 100%; font-size: 14px
     font-size: 18px;
 }
 
-/* body {
-    display: flex;
+#id-view-analyses-section{
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
+    /* height: 1200px;
+    width: 1200px; */
 }
 
-button {
-    padding: 10px 20px;
-    font-size: 18px;
-} */
+.card-list {
+    flex: 1;
+    /* max-width: 600px; */
+    height: 800px;
+    overflow-y: auto;
+}
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.card-title h3 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.card-title p {
+    margin: 5px 0 0;
+    color: #888;
+    font-size: 1em;
+}
+
+.card-details {
+    padding: 20px;
+    background-color: #f9f9f9;
+    display: none;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.arrow {
+    font-size: 1.5em;
+    transition: transform 0.3s ease;
+}
+
+.card.open .card-details {
+    display: block;
+}
+
+.card.open .arrow {
+    transform: rotate(90deg);
+}
+
+
+.c-category-detailed-title{
+    font-weight: 600;
+    padding: 20px;
+    margin: 20px;
+    text-align: center;
+    font-size: 35px;
+}
+
+.c-category-details-container {
+    margin: 50px;
+}
+
+.c-graph-category{
+    flex: 1;
+    height: 800px;
+}
+
+.c-return-title-btn{
+    position: fixed;
+    top: 5%;
+    left: 10%;
+    cursor: pointer;
+    background-color: antiquewhite;
+    padding:  5px 10px;
+    border-radius: 10px;
+}

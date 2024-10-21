@@ -22,26 +22,33 @@
                         <div> <strong>Amount:</strong>  <span id="id-trans-display-amount"></span> </div>
                         <div> <strong>Date:</strong>  <span id="id-trans-debt-date"></span> </div>
                     </div>
-                    <div id="id-category-list-container" class="c-container c-wrap">
-                        <div>
-                            id-category-list-container
-                        </div>
-                    </div>
+                    <div id="id-category-list-container" class="c-container c-wrap"></div>
                 </div>
             </section>
 
-            <section id="id-view-category-section">
+            <section id="id-view-analyses-section"></section>
 
+            <section id="id-category-drill-down-section">
+                <div onclick="showAnalysesPage()" class="c-return-title-btn">Return</div>
+                <div id="id-category-detailed-title" class="c-category-detailed-title"></div>
+                <div class="c-container c-category-details-container">
+                    <div id="id-list-of-category" class="card-list" ></div>
+                    <div id="id-graph-category" class="c-graph-category"></div>
+                </div>
+                
             </section>
 
         </div>
     </body>
 
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- *** Utils *** -->
     <script src="js/utils/dom-utils.js"></script>
     <script src="js/utils/dom-manipulations.js"></script>
     <script src="js/utils/http.js"></script>
-    <script src="js/utils/global.js"></script>
+    <script src="js/utils/strings.js"></script>
     
 
     <!-- *** Pages *** -->

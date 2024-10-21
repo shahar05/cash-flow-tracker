@@ -7,8 +7,9 @@ function parseFile() {
     changeSection('id-split-to-categories-section')
 }
 
-function onLoadFile(e) {
-    globalTransArray = JSON.parse(e.target.result).result.transactions;
+async function onLoadFile(e) {
+    const parseTrans = JSON.parse(e.target.result).result.transactions
+    await getClassifyTrans(parseTrans);
     displayCurrentTransaction();
     displayCategories();
 }

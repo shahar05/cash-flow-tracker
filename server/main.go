@@ -6,6 +6,7 @@ import (
 
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
+	"github.com/shahar05/cash-flow-viewer/analysis"
 	"github.com/shahar05/cash-flow-viewer/categories"
 	"github.com/shahar05/cash-flow-viewer/database"
 	"github.com/shahar05/cash-flow-viewer/transactions"
@@ -38,6 +39,9 @@ func main() {
 
 	categories.RegisterRoutes(r)
 	categories.SetDB(db)
+
+	analysis.RegisterRoutes(r)
+	analysis.SetDB(db)
 
 	handler := c.Handler(r)
 	// Start server

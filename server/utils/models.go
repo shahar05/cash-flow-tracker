@@ -10,3 +10,9 @@ type ErrorInfo struct {
 	Message string `json:"message"`
 	Code    int    `json:"code"`
 }
+
+// ColumnValue struct to hold column names and their corresponding values
+type ColumnValue struct {
+	ColName string
+	Value   interface{}
+}

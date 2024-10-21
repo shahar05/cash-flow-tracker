@@ -27,16 +27,17 @@ func RegisterRoutes(r *mux.Router) {
 
 func FilterTransactionsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("FilterTransactionsHandler: Handling POST /filter-transactions request")
-	var FullTransArr []FullTransDetail
-	if err := json.NewDecoder(r.Body).Decode(&FullTransArr); err != nil {
+	var body FullTransDetailArray
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		log.Printf("AttachTransactionHandler: Error decoding AttachTransReq: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	filteredTrans, err := FilterTransactions(FullTransArr)
+	filteredTrans, err := FilterTransactions(body.FullTransArr)
 	if err != nil {
 		utils.WriteJSONError(w, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	utils.WriteJSONOk(w, filteredTrans)

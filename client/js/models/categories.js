@@ -1,7 +1,7 @@
 
 
 function getCategories(){
-   return sendHttpRequest("categories")
+   return http.sendRequest("categories")
 }
 
 async function displayCategories() {
@@ -9,8 +9,8 @@ async function displayCategories() {
 
   const response = await getCategories();
 
-  if (!response.status) {
-    console.error("displayCategories");
+  if (response.error) {
+    console.error("displayCategories, Error: response.error");
     return;
   }
 
