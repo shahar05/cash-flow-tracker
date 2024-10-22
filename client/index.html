@@ -10,11 +10,13 @@
 
         <div id="id-main-container">
 
+            <!-- *** Upload File *** -->
             <section id="id-upload-file-section" class="c-active-section">
                 <input type="file" id="id-file-input" />
                 <button  class="c-upload-file-btn" onclick="parseFile()" >Start</button>
             </section>
 
+            <!-- *** Attach Transaction To Category *** -->
             <section id="id-split-to-categories-section">
                 <div class="c-container c-col-direction">
                     <div class="c-card" id="id-current-trans-container">
@@ -26,8 +28,19 @@
                 </div>
             </section>
 
+            <!-- ?_____? Coming Soon: Reattach Category To Transaction -->
+            <section id="id-reattach-category-section">
+
+            </section>
+
+
+            <!-- TODO: Show Graph of expenses per month -->
+            <!-- TODO: Pie Chart per Month Or Overall -->
+            <!-- *** Categories Pie Chart *** -->
             <section id="id-view-analyses-section"></section>
 
+            <!-- TODO: Create detailed trans per Month (By Tab Selection) -->
+            <!-- *** Category Analysis *** -->
             <section id="id-category-drill-down-section">
                 <div onclick="showAnalysesPage()" class="c-return-title-btn">Return</div>
                 <div id="id-category-detailed-title" class="c-category-detailed-title"></div>
@@ -35,14 +48,13 @@
                     <div id="id-list-of-category" class="card-list" ></div>
                     <div id="id-graph-category" class="c-graph-category"></div>
                 </div>
-                
             </section>
 
         </div>
     </body>
 
+    <!-- *** Plug-In  *** -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- *** Utils *** -->
     <script src="js/utils/dom-utils.js"></script>
