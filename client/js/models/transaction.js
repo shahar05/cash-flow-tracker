@@ -54,7 +54,7 @@ function makeArray(data) {
 }
 
 function drawChart(data) {
-
+    const totalSum = data.reduce((total, item) => total + item.sum, 0);
     data = google.visualization.arrayToDataTable(makeArray(data));
 
     const options = { 
@@ -63,10 +63,10 @@ function drawChart(data) {
         width: 1200,
         height: 1200,
         chartArea: {
-            top: -100,    // Adjust top margin (lower value moves the entire chart area up)
+            top: 0,    // Adjust top margin (lower value moves the entire chart area up)
             left: 0,    // Adjust left margin
             width: '100%',
-            height: '85%' // Increase this for a larger pie chart
+            height: '80%' // Increase this for a larger pie chart
         },
         legend: {
             position: 'right',  // Place the legend beside the pie chart
@@ -77,24 +77,107 @@ function drawChart(data) {
         }
     };
 
-    const chart = new google.visualization.PieChart($$('id-view-analyses-section'));
+    const chart = new google.visualization.PieChart($$('id-view-analyses-container'));
+
+
+    // Add text in the center after drawing the chart
+    google.visualization.events.addListener(chart, 'ready', function() {
+    
+        const container = document.getElementById('id-view-analyses-container');
+        
+        // Remove any existing text to avoid multiple text elements
+        const existingText = document.getElementById('centerText');
+        if (existingText) {
+            existingText.remove();
+        }
+
+        // Create a text element or use innerHTML to place the text in the center
+        const centerText = document.createElement('div');
+        centerText.id = 'centerText';  // Unique ID for the text element
+        centerText.style.position = 'absolute';
+        
+
+        centerText.style.left = '45%';
+        centerText.style.top = '50%';
+
+        centerText.style.fontSize = '20px';
+        centerText.style.fontWeight = 'bold';
+        centerText.innerHTML = 'Total<br>' + Math.floor(totalSum);
+
+        // Append text to the chart container
+        container.appendChild(centerText);
+    });
+    
 
     chart.draw(data, options);
+
 
     // Add click event listener
     google.visualization.events.addListener(chart, 'select', function() {
         var selectedItem = chart.getSelection()[0];
         if (selectedItem) {
-            var category = data.getValue(selectedItem.row, 0); // Get category
-            var sum = data.getValue(selectedItem.row, 1); // Get value (sum)
+            const category = data.getValue(selectedItem.row, 0); // Get category
+            const sum = data.getValue(selectedItem.row, 1); // Get value (sum)
             clickedOnPieChartItem(category, sum);
         }
     });
 }
 
+
+// function drawChart(data) {
+
+//     data = google.visualization.arrayToDataTable(makeArray(data));
+
+//     const options = { 
+//         pieHole: 0.4, // For a donut chart effect
+//         pieSliceText: 'value',
+//         width: 1200,
+//         height: 1200,
+//         chartArea: {
+//             top: 0,    // Adjust top margin (lower value moves the entire chart area up)
+//             left: 150,    // Adjust left margin
+//             width: '100%',
+//             height: '80%' // Increase this for a larger pie chart
+//         },
+//         legend: {
+//             position: 'right',  // Place the legend beside the pie chart
+//             alignment: 'center', // Vertically align the legend in the center
+
+//         },
+//         pieSliceTextStyle: {
+//             fontSize: 12,  // Control text size
+//         }
+//     };
+
+//     const chart = new google.visualization.PieChart($$('id-view-analyses-container'));
+
+//     chart.draw(data, options);
+
+//     // Add click event listener
+//     google.visualization.events.addListener(chart, 'select', function() {
+//         var selectedItem = chart.getSelection()[0];
+//         if (selectedItem) {
+//             const category = data.getValue(selectedItem.row, 0); // Get category
+//             const sum = data.getValue(selectedItem.row, 1); // Get value (sum)
+//             clickedOnPieChartItem(category, sum);
+//         }
+//     });
+
+// }
+
+var LastCategory = null;
+
 //console.log('Clicked on:', category, 'with value:', sum);
 async function clickedOnPieChartItem(category, sum) {
     
+    if (!category) {
+        category = LastCategory;
+    }
+    LastCategory = category;
+    if (!category) {
+        alert('wtf')
+        return;
+    }
     const resDetails = await http.sendRequest(`category-analysis?name=${category}`)
     if (resDetails.error) {
         console.error(resDetails.error);
@@ -108,7 +191,9 @@ async function clickedOnPieChartItem(category, sum) {
     }
 
     // Make API CALL For get the GRaph
-    changeSection('id-category-drill-down-section',()=>{
+    changeSection('id-category-drill-down-section',()=>{   
+             
+        $$('id-category-drill-down-section-a').removeAttribute('disabled');
         $$('id-category-detailed-title').innerHTML = strings.capitalizeFirstLetter(category)
         $$('id-list-of-category').innerHTML = buildItemList(resDetails.data);
         showGraph(resGraph.data)

@@ -1,4 +1,162 @@
-body { display: flex; margin: 0; overflow: hidden; height: 100%; font-size: 14px;}
+* { font-family: Poppins, sans-serif; }
+body { display: flex; margin: 0; overflow: hidden; height: 100vh; font-size: 14px;}
+
+
+/* # Header # */
+#id-main-container section header {
+	position: sticky;
+	top: 0;
+	display: flex;
+	align-items: center;
+	height: 65px;
+	padding: 1rem 1.5rem;
+	background: white;
+	border-bottom: 1px solid #E8EAED;
+	box-shadow: 0 0 15px 5px rgba(0, 0, 0, .1);
+	box-sizing: border-box;
+	z-index: 1;
+}
+#id-main-container section header > img { width: 20px; height: 20px; padding: 7px; margin-right: 1rem; background: #191A23; border-radius: 50%; }
+#id-main-container section header > h3 { margin: 0; font-weight: 600; }
+#id-main-container section header > h3 span { color: #8C909A; font-weight: 500; }
+#id-main-container section header > .c-header-actions { display: flex; align-items: center; margin-left: auto; }
+#id-main-container section header > .c-header-actions a { color: #00AF6C; text-decoration: none; }
+#id-main-container section header > .c-header-actions a:hover span:not(:first-child) { text-decoration: underline; }
+#id-main-container section header > .c-header-actions > *:not(:last-child) { margin-right: 1rem; padding-right: 1rem; border-right: 1px solid #E8EAED; }
+
+
+
+/* # Navbar # */
+.mmd-c-navbar {
+	display: flex;
+    flex-direction: column;
+	width: 17%;
+	padding: 1rem;
+	background-color: #999;
+	background: radial-gradient(200% 60% at 120% 65%, #005E57 21.00%, #003C38 36.00%, #00221F 51.00%, #000F0D 67.00%, #000303 83.00%, #000 100%);
+	box-sizing: border-box;
+	transition: width .3s;
+}
+.mmd-c-navbar.c-menu-closed { width: calc(30px + 2rem); }
+.tabulator-cell > img { width: 85%; }
+
+#id-nav-logo-container {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	height: 35px;
+	margin-bottom: 1.75rem;
+	white-space: nowrap;
+}
+nav.c-menu-closed #id-nav-logo-container { justify-content: center; }
+
+#id-nav-logo-container > img { width: 50px; }
+#id-nav-logo-container > h1 { margin: 0; color: white; }
+#id-nav-logo-container > #id-toggle-menu { display: flex; margin-left: auto; transition: transform .2s; }
+#id-nav-logo-container > #id-toggle-menu > img { width: 15px; }
+
+.mmd-c-navbar.c-menu-closed #id-nav-logo-container > img,
+.mmd-c-navbar.c-menu-closed #id-nav-logo-container > h1 { display: none; }
+.mmd-c-navbar.c-menu-closed #id-nav-logo-container > #id-toggle-menu { margin: 0; transform: scaleX(-1); }
+
+#id-nav-items {
+	display: flex;
+	flex-direction: column;
+	width: calc(17vw - 2rem); /* should be the width of <nav> less the inline padding */
+	height: 100%;
+}
+#id-nav-items > a, #id-nav-items > span {
+	display: flex;
+	align-items: center;
+	gap: 1rem; /* should be equal to gap of `#id-nav-logo-container` */
+	height: 30px;
+	margin-bottom: 1.5rem;
+	color: #ADB4CC;
+	text-decoration: none;
+}
+#id-nav-items > a[disabled] {
+	opacity: .5;
+	pointer-events: none;
+}
+#id-nav-items > a:hover, #id-nav-items > a.c-active-nav-item { color: #30E49D; }
+#id-nav-items > a > img, #id-nav-items > span > img {
+	flex-shrink: 0;
+	width: 20px;
+	height: 20px;
+	padding: 5px;
+	box-sizing: content-box;
+}
+#id-nav-items > a > img.c-highlighted-icon, #id-nav-items > span > img.c-highlighted-icon,
+#id-nav-items > a:hover > img:not(.c-highlighted-icon),
+#id-nav-items > a.c-active-nav-item > img:not(.c-highlighted-icon) { display: none; }
+#id-nav-items > a:hover > img.c-highlighted-icon,
+#id-nav-items > a.c-active-nav-item > img.c-highlighted-icon {
+	display: inline-block;
+	background: #313247;
+	border-radius: 50%;
+}
+
+#id-nav-items-separator { width: 100%; margin-bottom: 1.5rem; text-align: center; color: #ADB4CC; font-size: 200%; cursor: default; transition: .2s width; }
+nav.c-menu-closed #id-nav-items-separator { width: 30px; }
+
+#id-nav-user-box {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: .75rem;
+	height: 60px;
+	padding: 1rem;
+	padding-right: 0;
+	background: rgba(0, 0, 0, 0.20);
+	border: 1px solid #313247;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+nav.c-menu-closed #id-nav-user-box { padding-left: 0; }
+#id-nav-user-image {
+	flex-shrink: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 30px;
+	height: 30px;
+	background-color: #30E49D;
+	border-radius: 50%;
+	font-weight: 500;
+}
+#id-nav-user-title {
+	flex: 1;
+	line-height: 1;
+	color: #ADB4CC;
+	white-space: nowrap;
+}
+nav.c-menu-closed #id-nav-user-image, nav.c-menu-closed #id-nav-user-title { display: none; }
+#id-nav-user-box-handle { width: 2rem; text-align: center; }
+#id-nav-user-box-menu {
+	display: none;
+	position: absolute;
+	bottom: 0;
+	left: calc(100% + .5rem);
+	padding: .5rem 1rem;
+	background-color: #E8EAED;
+	border: 1px solid #D4D4D4;
+	border-radius: 4px;
+	font-size: .9rem;
+	white-space: nowrap;
+	box-shadow: 0 0 14px rgba(0, 0, 0, .3);
+	z-index: 1;
+}
+#id-nav-user-box-menu > *:not(:last-child) { margin-bottom: .5rem; padding-bottom: .5rem; border-bottom: 1px solid #D4D4D4; }
+#id-nav-user-box-menu a { font-size: .85rem; color: #00AF6C; text-decoration: none; }
+
+
+.mmd-c-navbar.c-menu-closed #id-nav-items a > span {
+    display: none;
+}
+
+
+
 
 #id-main-container { flex: 1; min-width: 0; }
 
@@ -11,10 +169,6 @@ body { display: flex; margin: 0; overflow: hidden; height: 100%; font-size: 14px
 
 #id-main-container section.c-active-section { display: flex; }
 
-#id-upload-file-section{
-    justify-content: center;
-    align-items: center;
-}
 
 .c-col-direction{
     flex-direction: column;
@@ -49,11 +203,10 @@ body { display: flex; margin: 0; overflow: hidden; height: 100%; font-size: 14px
     font-size: 18px;
 }
 
-#id-view-analyses-section{
-    justify-content: center;
-    align-items: center;
-    /* height: 1200px;
-    width: 1200px; */
+#id-view-analyses-container{
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    
 }
 
 .card-list {
@@ -138,4 +291,9 @@ body { display: flex; margin: 0; overflow: hidden; height: 100%; font-size: 14px
     background-color: antiquewhite;
     padding:  5px 10px;
     border-radius: 10px;
+}
+
+/* Add this CSS to your styles */
+#id-view-analyses-container {
+    cursor: pointer; 
 }
