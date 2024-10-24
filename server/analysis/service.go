@@ -61,17 +61,17 @@ func GetCategoryAnalysis(categoryName string) ([]transactions.Transaction, error
 	return transArray, nil
 }
 
+// SQL query to get the sum by category within the date range
+// query := `
+// 	SELECT c.name, SUM(t.amount)
+// 	FROM transactions t
+// 	JOIN categories c ON t.category_id = c.id
+// 	WHERE t.date BETWEEN $1 AND $2
+// 	GROUP BY c.name
+// `
+
 // Function to query the database and return the results
 func GetCategorySums() ([]CategorySum, error) {
-	// SQL query to get the sum by category within the date range
-	// query := `
-	// 	SELECT c.name, SUM(t.amount)
-	// 	FROM transactions t
-	// 	JOIN categories c ON t.category_id = c.id
-	// 	WHERE t.date BETWEEN $1 AND $2
-	// 	GROUP BY c.name
-	// `
-
 	query := `
 	SELECT c.name, SUM(t.amount)
 	FROM transactions t
@@ -161,4 +161,42 @@ func GetMonthlyTransactionSumsByCategory(categoryName string) ([]MonthlyCategory
 	}
 
 	return monthlyCategoryTransactions, nil
+}
+
+// MonthlyTransaction struct to hold monthly transaction data
+type MonthlyTransaction struct {
+	Month time.Time // Month is the start date of each month
+	Total float64   // Total is the sum of transactions in that month
+}
+
+// GetMonthlyTransactions function retrieves monthly transaction totals
+func GetMonthlyTransactions() ([]MonthlyTransaction, error) {
+	query := `
+		SELECT DATE_TRUNC('month', date) AS month,
+		       SUM(amount) AS total
+		FROM transactions
+		GROUP BY month
+		ORDER BY month;`
+
+	rows, err := DB.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	var monthlyTransactions []MonthlyTransaction
+
+	for rows.Next() {
+		var mt MonthlyTransaction
+		if err := rows.Scan(&mt.Month, &mt.Total); err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+		monthlyTransactions = append(monthlyTransactions, mt)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error during row iteration: %w", err)
+	}
+
+	return monthlyTransactions, nil
 }

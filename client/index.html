@@ -27,11 +27,33 @@
 						Upload File
 					</a>
 
+
                     <a href="#" id="id-view-analyses-section-a" onclick="showAnalysesPage()">
 						<img src="assets/menu-icons/charging.svg" />
 						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
 						Category Pie Chart
 					</a>
+
+                    <a href="#" id="id-reattach-category-section-a" onclick="changeSection('id-reattach-category-section')">
+						<img src="assets/menu-icons/charging.svg" />
+						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
+						Reattach Category To Transaction
+					</a>
+
+                    <a href="#" id="id-graph-total-expenses-a" onclick="changeSection('id-graph-total-expenses')">
+						<img src="assets/menu-icons/charging.svg" />
+						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
+						Expenses Graph
+					</a>
+
+                    <a href="#" id="id-pie-chart-per-month-a" onclick="changeSection('id-pie-chart-per-month')">
+						<img src="assets/menu-icons/charging.svg" />
+						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
+						Monthly Pie Chart
+					</a>
+
+                    
+
 
                     <a href="#" disabled id="id-category-drill-down-section-a" onclick="clickedOnPieChartItem()">
 						<img src="assets/menu-icons/charging.svg" />
@@ -62,7 +84,7 @@
             <section id="id-upload-file-section" class="c-active-section">
                 <header>
                     <img src="assets/menu-icons/users-hl.svg" />
-                    <h3>Users Management <span>(<span id="id-users-count">0</span> Users)</span></h3>
+                    <h3>Upload File</h3>
                 </header>
                 <div class="c-section-main-container">
                     <input type="file" id="id-file-input" />
@@ -82,19 +104,29 @@
                 </div>
             </section>
 
-            <!-- ?_____? Coming Soon: Reattach Category To Transaction -->
-            <section id="id-reattach-category-section">
+            
+            
+            <section id="id-reattach-category-section" >
+                <!-- TODO: Reattach Category To Transaction -->
+                <div style="display: flex; justify-content: center; align-items: center; font-size: 50px; height: 100%; "><strong>Coming Soon</strong> <br> Reattach Category To Transaction </div>
+            </section>
 
+            <section id="id-graph-total-expenses">
+                <div style="display: flex; justify-content: center; align-items: center; font-size: 50px; height: 100%; "><strong>Coming Soon</strong> <br> Expenses Graph </div>
+                <!-- TODO: Show Graph of expenses per month -->
+            </section>
+
+            <section id="id-pie-chart-per-month">
+                <div style="display: flex; justify-content: center; align-items: center; font-size: 50px; height: 100%; "><strong>Coming Soon</strong> <br> Monthly Pie Chart </div>
+                <!-- TODO: Pie Chart per Month Or Overall -->
             </section>
 
 
-            <!-- TODO: Show Graph of expenses per month -->
-            <!-- TODO: Pie Chart per Month Or Overall -->
             <!-- *** Categories Pie Chart *** -->
             <section id="id-view-analyses-section">
                 <header>
                     <img src="assets/menu-icons/users-hl.svg" />
-                    <h3>Users Management <span>(<span id="id-users-count">0</span> Users)</span></h3>
+                    <h3>Categories Pie Chart</h3>
                 </header>
                 <div id="id-view-analyses-container" class="c-section-main-container">
 
