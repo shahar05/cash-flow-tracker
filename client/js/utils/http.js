@@ -2,7 +2,7 @@ var http = (() => {
     const baseUrl = "http://localhost:8080/";
 
 
-    async function sendRequest(endpoint, method = 'GET', body = null, headers = {}) {
+    async function call(endpoint, method = 'GET', body = null, headers = {}) {
         const allowedMethods = ['GET', 'POST', 'PUT', 'DELETE'];
 
         // Validate the method
@@ -57,7 +57,7 @@ var http = (() => {
 
 
     return {
-        sendRequest
+        call
     }
 })();
 

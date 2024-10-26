@@ -1,7 +1,7 @@
 
 
 function getCategories(){
-   return http.sendRequest("categories")
+   return http.call("categories")
 }
 
 async function displayCategories() {

@@ -3,6 +3,7 @@ package analysis
 import (
 	"fmt"
 	"log"
+	"sort"
 	"time"
 
 	"github.com/shahar05/cash-flow-viewer/categories"
@@ -199,4 +200,91 @@ func GetMonthlyTransactions() ([]MonthlyTransaction, error) {
 	}
 
 	return monthlyTransactions, nil
+}
+
+// func GetMonthlyAnalysis() ([]MonthlyCategorySum, error) {
+// 	query := `
+// 	SELECT c.name, TO_CHAR(t.date, 'YYYY-MM') AS month, SUM(t.amount) AS total_sum
+// 	FROM transactions t
+// 	JOIN categories c ON t.category_id = c.id
+// 	GROUP BY c.name, month
+// 	ORDER BY c.name, month
+// 	`
+
+// 	rows, err := DB.Query(query)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("query error: %w", err)
+// 	}
+// 	defer rows.Close()
+
+// 	var response []MonthlyCategorySum
+
+// 	// Iterate over the result set
+// 	for rows.Next() {
+// 		var categorySum CategorySum
+// 		if err := rows.Scan(&categorySum.Name, &categorySum.Month, &categorySum.Sum); err != nil {
+// 			return nil, fmt.Errorf("scan error: %w", err)
+// 		}
+// 		response = append(response, categorySum)
+// 	}
+
+// 	// Check for row errors
+// 	if err := rows.Err(); err != nil {
+// 		return nil, fmt.Errorf("row error: %w", err)
+// 	}
+
+// 	return response, nil
+// }
+
+func GetMonthlyAnalysis() ([]MonthlyCategorySum, error) {
+	query := `
+	SELECT TO_CHAR(t.date, 'YYYY-MM') AS month, c.name, SUM(t.amount) AS total_sum
+	FROM transactions t
+	JOIN categories c ON t.category_id = c.id
+	GROUP BY month, c.name
+	ORDER BY month, c.name
+	`
+
+	rows, err := DB.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("query error: %w", err)
+	}
+	defer rows.Close()
+
+	// Initialize a map to organize results by month
+	monthlySumsMap := make(map[string][]CategorySum)
+
+	// Iterate over the result set and populate the map
+	for rows.Next() {
+		var month string
+		var categorySum CategorySum
+
+		if err := rows.Scan(&month, &categorySum.Name, &categorySum.Sum); err != nil {
+			return nil, fmt.Errorf("scan error: %w", err)
+		}
+
+		// Append the category sum to the appropriate month in the map
+		monthlySumsMap[month] = append(monthlySumsMap[month], categorySum)
+	}
+
+	// Check for any errors encountered during iteration
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("row error: %w", err)
+	}
+
+	// Convert the map into a slice of MonthlyCategorySum objects
+	var response []MonthlyCategorySum
+	for month, categorySumArr := range monthlySumsMap {
+		response = append(response, MonthlyCategorySum{
+			Month:          month,
+			CategorySumArr: categorySumArr,
+		})
+	}
+
+	// Optional: Sort the response by month if needed (e.g., in case map order is unpredictable)
+	sort.Slice(response, func(i, j int) bool {
+		return response[i].Month < response[j].Month
+	})
+
+	return response, nil
 }

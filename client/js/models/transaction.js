@@ -2,7 +2,7 @@ var globalTransArray = null;
 var globalTransArrayIndex = 0;
 
 async function getClassifyTrans(fullTrans) {
-    const res = await http.sendRequest("filter-transactions", "POST", {trans:fullTrans});
+    const res = await http.call("filter-transactions", "POST", {trans:fullTrans});
     if (res.error) throw Error(res.error);
     globalTransArray = res.data
 }
@@ -11,7 +11,7 @@ async function attachTransaction(catName,catID) {
     const cat = {name: catName,id: catID}
     const body = createNewTransaction(getCurrentTransaction(), cat)
 
-    const response = await http.sendRequest("transactions", "POST", body);
+    const response = await http.call("transactions", "POST", body);
     console.log(response);
     displayNextTransaction();
 }
@@ -31,7 +31,7 @@ function displayCurrentTransaction() {
 }
 
 function getAnalyses() {
-    return http.sendRequest('analysis')
+    return http.call('analysis')
 }
 
  function showAnalysesPage() {
@@ -178,13 +178,13 @@ async function clickedOnPieChartItem(category, sum) {
         alert('wtf')
         return;
     }
-    const resDetails = await http.sendRequest(`category-analysis?name=${category}`)
+    const resDetails = await http.call(`category-analysis?name=${category}`)
     if (resDetails.error) {
         console.error(resDetails.error);
         return;
     }
     
-    const resGraph = await http.sendRequest(`category-graph?name=${category}`)
+    const resGraph = await http.call(`category-graph?name=${category}`)
     if (resGraph.error) {
         console.error(resGraph.error);
         return;

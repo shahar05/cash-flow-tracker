@@ -40,13 +40,13 @@
 						Reattach Category To Transaction
 					</a>
 
-                    <a href="#" id="id-graph-total-expenses-a" onclick="changeSection('id-graph-total-expenses')">
+                    <a href="#" id="id-graph-total-expenses-a" onclick="moveToExpensesGraph()">
 						<img src="assets/menu-icons/charging.svg" />
 						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
 						Expenses Graph
 					</a>
 
-                    <a href="#" id="id-pie-chart-per-month-a" onclick="changeSection('id-pie-chart-per-month')">
+                    <a href="#" id="id-pie-chart-per-month-a" onclick="moveToPieByMonth()">
 						<img src="assets/menu-icons/charging.svg" />
 						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
 						Monthly Pie Chart
@@ -86,7 +86,7 @@
                     <img src="assets/menu-icons/users-hl.svg" />
                     <h3>Upload File</h3>
                 </header>
-                <div class="c-section-main-container">
+                <div>
                     <input type="file" id="id-file-input" />
                     <button  class="c-upload-file-btn" onclick="parseFile()" >Start</button>
                 </div>                
@@ -111,14 +111,20 @@
                 <div style="display: flex; justify-content: center; align-items: center; font-size: 50px; height: 100%; "><strong>Coming Soon</strong> <br> Reattach Category To Transaction </div>
             </section>
 
-            <section id="id-graph-total-expenses">
-                <div style="display: flex; justify-content: center; align-items: center; font-size: 50px; height: 100%; "><strong>Coming Soon</strong> <br> Expenses Graph </div>
-                <!-- TODO: Show Graph of expenses per month -->
+            <section id="id-graph-total-expenses" >
+                <header>
+                    <img src="assets/menu-icons/users-hl.svg" />
+                    <h3>Expenses Graph</h3>
+                </header>
+                <div id="id-graph-total-expenses-container" ></div>
             </section>
 
             <section id="id-pie-chart-per-month">
-                <div style="display: flex; justify-content: center; align-items: center; font-size: 50px; height: 100%; "><strong>Coming Soon</strong> <br> Monthly Pie Chart </div>
-                <!-- TODO: Pie Chart per Month Or Overall -->
+                <header>
+                    <img src="assets/menu-icons/users-hl.svg" />
+                    <h3>Monthly Pie Chart</h3>
+                </header>
+                <div id="id-pie-chart-per-month-container" ></div>
             </section>
 
 
@@ -128,9 +134,7 @@
                     <img src="assets/menu-icons/users-hl.svg" />
                     <h3>Categories Pie Chart</h3>
                 </header>
-                <div id="id-view-analyses-container" class="c-section-main-container">
-
-                </div>
+                <div id="id-view-analyses-container"></div>
             </section>
 
             <!-- TODO: Create detailed trans per Month (By Tab Selection) -->
@@ -150,6 +154,7 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <!-- *** Utils *** -->
+    <script src="js/utils/navigation.js"></script>
     <script src="js/utils/dom-utils.js"></script>
     <script src="js/utils/dom-manipulations.js"></script>
     <script src="js/utils/http.js"></script>

@@ -22,6 +22,18 @@ func RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/category-analysis", GetCategoryAnalysisHandler).Methods("GET")
 	r.HandleFunc("/category-graph", GetCategoryGraphHandler).Methods("GET")
 	r.HandleFunc("/categories-graph", GetCategoriesGraphHandler).Methods("GET")
+	r.HandleFunc("/monthly-analysis", GetMOnthlyAnalysisHandler).Methods("GET")
+}
+
+func GetMOnthlyAnalysisHandler(w http.ResponseWriter, r *http.Request) {
+	response, err := GetMonthlyAnalysis()
+	if err != nil {
+		log.Printf("AddCategoriesHandler: Error adding transaction: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	utils.WriteJSONOk(w, response)
 }
 
 func GetCategoriesGraphHandler(w http.ResponseWriter, r *http.Request) {

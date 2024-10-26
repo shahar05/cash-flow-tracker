@@ -297,3 +297,7 @@ nav.c-menu-closed #id-nav-user-image, nav.c-menu-closed #id-nav-user-title { dis
 #id-view-analyses-container {
     cursor: pointer; 
 }
+
+.c-just-center{
+	justify-content: center;
+}
