@@ -209,36 +209,37 @@ function showGraph(data) {
     });
 }
 
-      // Function to convert your data object and draw the chart
-      function drawGraph(dataObject) {
-        // Convert the dataObject into the format that Google Charts expects
-        var data = new google.visualization.DataTable();
-        data.addColumn('date', 'Month'); // First column: Date
-        data.addColumn('number', 'Total'); // Second column: Total
+    // Function to convert your data object and draw the chart
+    function drawGraph(dataObject) {
+        
+    // Convert the dataObject into the format that Google Charts expects
+    var data = new google.visualization.DataTable();
+    data.addColumn('date', 'Month'); // First column: Date
+    data.addColumn('number', 'Total'); // Second column: Total
 
-        // Loop through the dataObject and add rows to the chart data
-        dataObject.forEach(item => {
-          data.addRow([new Date(item.Month), item.Total]);
-        });
+    // Loop through the dataObject and add rows to the chart data
+    dataObject.forEach(item => {
+        data.addRow([new Date(item.Month), item.Total]);
+    });
 
-        // Set chart options
-        var options = {
-          title: 'Monthly Totals',
-          curveType: 'function', // Makes the line smooth
-          legend: { position: 'bottom' },
-          hAxis: {
-            title: 'Month',
-            format: 'MMM yyyy' // Custom format for dates
-          },
-          vAxis: {
-            title: 'Total'
-          }
-        };
+    // Set chart options
+    var options = {
+        title: 'Monthly Totals',
+        curveType: 'function', // Makes the line smooth
+        legend: { position: 'bottom' },
+        hAxis: {
+        title: 'Month',
+        format: 'MMM yyyy' // Custom format for dates
+        },
+        vAxis: {
+        title: 'Total'
+        }
+    };
 
-        // Create the chart and draw it in the 'chart_div' element
-        var chart = new google.visualization.LineChart($$('id-graph-category'));
-        chart.draw(data, options);
-      }
+    // Create the chart and draw it in the 'chart_div' element
+    var chart = new google.visualization.LineChart($$('id-graph-category'));
+    chart.draw(data, options);
+    }
 
 function toggleCardDetails(card) {
     card.classList.toggle('open');
@@ -291,7 +292,7 @@ function displayNextTransaction() {
 function getCurrentTransaction() {
     if (!globalTransArray || !globalTransArray.length) {
         console.error('getCurrentTransaction: globalTransArray is null');
-        return;
+        return null;
     }
     return globalTransArray[globalTransArrayIndex];
 }

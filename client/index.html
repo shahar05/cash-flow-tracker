@@ -13,7 +13,7 @@
 			<div id="id-nav-logo-container">
 				<img src="assets/icons/pie-chart-money-svgrepo-com.svg" />
 				<h1>Expense Tracker</h1>
-				<a href="#" id="id-toggle-menu" onclick="toggleMenu(); return false;">
+				<a href="#" id="id-toggle-menu" onclick="dom.toggleMenu(); return false;">
 					<img src="assets/toggle-menu-button.svg" />
 				</a>
 			</div>
@@ -21,41 +21,43 @@
 			<div style="flex: 1; padding-top: 2px; overflow: hidden;">
 				<div id="id-nav-items">
 
-					<a href="#" id="id-upload-file-section-a" class="c-active-nav-item"  onclick="changeSection('id-upload-file-section')">
+					<a href="#" id="id-upload-file" class="c-active-nav-item"  onclick="NavService.changeSection(this)">
 						<img src="assets/menu-icons/charging.svg" />
 						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
 						Upload File
 					</a>
 
+                    <a href="#" id="id-attach-trans-with-category" class="c-active-nav-item"  onclick="NavService.changeSection(this)">
+						<img src="assets/menu-icons/charging.svg" />
+						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
+						Attach Transaction To Category
+					</a>
 
-                    <a href="#" id="id-view-analyses-section-a" onclick="showAnalysesPage()">
+                    <a href="#" id="id-view-analyses" onclick="NavService.changeSection(this)">
 						<img src="assets/menu-icons/charging.svg" />
 						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
 						Category Pie Chart
 					</a>
 
-                    <a href="#" id="id-reattach-category-section-a" onclick="changeSection('id-reattach-category-section')">
+                    <a href="#" id="id-reattach-category" onclick="NavService.changeSection(this)">
 						<img src="assets/menu-icons/charging.svg" />
 						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
 						Reattach Category To Transaction
 					</a>
 
-                    <a href="#" id="id-graph-total-expenses-a" onclick="moveToExpensesGraph()">
+                    <a href="#" id="id-graph-total-expenses" onclick="NavService.changeSection(this)">
 						<img src="assets/menu-icons/charging.svg" />
 						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
 						Expenses Graph
 					</a>
 
-                    <a href="#" id="id-pie-chart-per-month-a" onclick="moveToPieByMonth()">
+                    <a href="#" id="id-pie-chart-per-month" onclick="NavService.changeSection(this)">
 						<img src="assets/menu-icons/charging.svg" />
 						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
 						Monthly Pie Chart
 					</a>
 
-                    
-
-
-                    <a href="#" disabled id="id-category-drill-down-section-a" onclick="clickedOnPieChartItem()">
+                    <a href="#" disabled id="id-category-drill-down" onclick="NavService.changeSection(this)">
 						<img src="assets/menu-icons/charging.svg" />
 						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
 						Category Drill Down 
@@ -88,12 +90,12 @@
                 </header>
                 <div>
                     <input type="file" id="id-file-input" />
-                    <button  class="c-upload-file-btn" onclick="parseFile()" >Start</button>
+                    <button  class="c-upload-file-btn" onclick="UploadFile.parseFile()" >Start</button>
                 </div>                
             </section>
 
             <!-- *** Attach Transaction To Category *** -->
-            <section id="id-split-to-categories-section">
+            <section id="id-attach-trans-with-category-section">
                 <div class="c-container c-col-direction">
                     <div class="c-card" id="id-current-trans-container">
                         <div> <strong>Store:</strong>  <span id="id-trans-merchant-name"></span> </div>
@@ -103,15 +105,14 @@
                     <div id="id-category-list-container" class="c-container c-wrap"></div>
                 </div>
             </section>
-
             
-            
-            <section id="id-reattach-category-section" >
-                <!-- TODO: Reattach Category To Transaction -->
+            <!-- *** Reattach Category To Transaction *** -->
+            <section id="id-reattach-category-section" >       
                 <div style="display: flex; justify-content: center; align-items: center; font-size: 50px; height: 100%; "><strong>Coming Soon</strong> <br> Reattach Category To Transaction </div>
             </section>
 
-            <section id="id-graph-total-expenses" >
+            <!-- *** Expenses Graph *** -->
+            <section id="id-graph-total-expenses-section" >
                 <header>
                     <img src="assets/menu-icons/users-hl.svg" />
                     <h3>Expenses Graph</h3>
@@ -119,14 +120,14 @@
                 <div id="id-graph-total-expenses-container" ></div>
             </section>
 
-            <section id="id-pie-chart-per-month">
+                <!-- *** Monthly Pie Chart *** -->
+            <section id="id-pie-chart-per-month-section">
                 <header>
                     <img src="assets/menu-icons/users-hl.svg" />
                     <h3>Monthly Pie Chart</h3>
                 </header>
                 <div id="id-pie-chart-per-month-container" ></div>
             </section>
-
 
             <!-- *** Categories Pie Chart *** -->
             <section id="id-view-analyses-section">
@@ -136,8 +137,7 @@
                 </header>
                 <div id="id-view-analyses-container"></div>
             </section>
-
-            <!-- TODO: Create detailed trans per Month (By Tab Selection) -->
+            
             <!-- *** Category Analysis *** -->
             <section id="id-category-drill-down-section">                
                 <div id="id-category-detailed-title" class="c-category-detailed-title"></div>
