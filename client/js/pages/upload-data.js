@@ -10,6 +10,7 @@ var UploadFilePage = (()=>{
 
     async function onLoadFile(e) {
         const unfilteredTrans = JSON.parse(e.target.result).result.transactions
+        debugger;
         NavService.changeSection(null, 'id-attach-trans-with-category', {unfilteredTrans})          
     }
 

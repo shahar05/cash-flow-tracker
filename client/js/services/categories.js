@@ -1,7 +1,7 @@
 const categoryService = (()=>{
 
     async function getAllCategories() {
-        const response = await getCategories();
+        const response = await http.call("categories");
 
         if (response.error) {
           console.error("displayCategories, Error: response.error");
@@ -10,6 +10,8 @@ const categoryService = (()=>{
       
         return response.data;
     }
+
+
 
     return {
         getAllCategories

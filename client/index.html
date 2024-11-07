@@ -27,7 +27,7 @@
 						Upload File
 					</a>
 
-                    <a href="#" id="id-attach-trans-with-category" class="c-active-nav-item"  onclick="NavService.changeSection(this)">
+                    <a href="#" id="id-attach-trans-with-category"  onclick="NavService.changeSection(this)">
 						<img src="assets/menu-icons/charging.svg" />
 						<img src="assets/menu-icons/charging-hl.svg" class="c-highlighted-icon" />
 						Attach Transaction To Category
@@ -90,7 +90,7 @@
                 </header>
                 <div>
                     <input type="file" id="id-file-input" />
-                    <button  class="c-upload-file-btn" onclick="UploadFile.parseFile()" >Start</button>
+                    <button  class="c-upload-file-btn" onclick="UploadFilePage.parseFile()" >Start</button>
                 </div>                
             </section>
 
@@ -153,19 +153,31 @@
     <!-- *** Plug-In  *** -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-    <!-- *** Utils *** -->
-    <script src="js/utils/navigation.js"></script>
-    <script src="js/utils/dom-utils.js"></script>
-    <script src="js/utils/dom-manipulations.js"></script>
-    <script src="js/utils/http.js"></script>
-    <script src="js/utils/strings.js"></script>
-    
+    <!-- *** Classes *** -->
+    <script src="js/classes/dom.js"></script>
+    <script src="js/classes/http.js"></script>
+    <script src="js/classes/strings.js"></script>
+
+    <!-- *** Components *** -->
+    <script src="js/components/charts.js"></script>
 
     <!-- *** Pages *** -->
+    <script src="js/pages/attach-transaction.js"></script>
+    <script src="js/pages/category-analysis.js"></script>
+    <script src="js/pages/category-pie-chart.js"></script>
+    <script src="js/pages/expenses-graph.js"></script>
+    <script src="js/pages/monthly-pie-chart.js"></script>
+    <script src="js/pages/reattach-transaction.js"></script>
     <script src="js/pages/upload-data.js"></script>
 
-    <!-- *** Models *** -->
-    <script src="js/models/categories.js"></script>
-    <script src="js/models/transaction.js"></script>
-    
+    <!-- *** Services *** -->
+    <script src="js/services/analysis.js"></script>
+    <script src="js/services/categories.js"></script>
+    <script src="js/services/navigator.js"></script>
+    <script src="js/services/transaction.js"></script>
+
+    <!-- *** Global *** -->
+    <script src="js/global.js"></script>
+
+
 </html>
