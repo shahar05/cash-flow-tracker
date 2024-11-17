@@ -8,15 +8,7 @@ var CategoryAnalysisPage = (()=>{
             console.error(res);
             return;
         }         
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback( () =>  {
-            drawChart(res.data)  
-        } );
-    }
-
-
-    function drawChart(params) {
-        
+        charts.tempDrawPieChart(res.data);
     }
 
     return {

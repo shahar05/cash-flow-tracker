@@ -3,9 +3,7 @@ const NavService = (()=>{
     const allNavItems = document.querySelectorAll('#id-nav-items > a');
     const allSections = document.querySelectorAll("#id-main-container section");        
 
-
-    //
-    const pagesId = {
+    const pageMap = {
         "id-upload-file": UploadFilePage,
         "id-attach-trans-with-category": AttachTransactionPage,
         "id-view-analyses": CategoryAnalysisPage,
@@ -16,7 +14,7 @@ const NavService = (()=>{
     }
 
     function changeSection(elem, elemId, ...infiniteArguments) {
-    
+        
         // Use the element ID if `elem` is provided
         if (elem) elemId = elem.id;
     
@@ -36,9 +34,9 @@ const NavService = (()=>{
     
         // Highlight the current navigation item
         allNavItems.forEach(navItem => navItem.classList.toggle('c-active-nav-item', navItem === currentNavItem));
-    
+        
         // Pass `infiniteArguments` as separate arguments to `onInit`
-        pagesId[elemId].onInit(...infiniteArguments);
+        pageMap[elemId].onInit(...infiniteArguments);
     }
     
 

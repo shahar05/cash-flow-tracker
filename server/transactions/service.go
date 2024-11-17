@@ -48,6 +48,10 @@ func AddTransaction(transaction Transaction) (string, error) {
 		return "", fmt.Errorf("AddTransaction: transaction date is required")
 	}
 
+	if transaction.Amount < 0 { //attach to credit Category
+		transaction.Category.ID = "2d496035-9ed0-4511-a461-318326f07390"
+	}
+
 	var id string
 	err := DB.QueryRow(
 		`INSERT INTO transactions 

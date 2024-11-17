@@ -3,39 +3,8 @@
 var AttachTransactionPage = (()=>{
 
     async function onInit(object) {
-        const err = await transactionService.filterTransactions(object.unfilteredTarns);
-        if (err) {            
-            console.error(err); // Handle it
-            return;
-        }
-        displayCurrentTransaction();
+        startDisplayTransactions(object?.unfilteredTrans);
         displayCategories();
-    }
-
-    async function attachTransaction(name,id) {
-        const cat = {name, id};
-        const body = transactionService.createTransaction(cat);    
-        const response = await http.call("transactions", "POST", body);
-        console.log(response);
-        displayNextTransaction();
-    }
-
-    function incrementTransIndex() {
-        if (globalTransArrayIndex === globalTransArray.length - 1) {            
-            console.error('displayCurrentTransaction: globalTransArrayIndex >= globalTransArray.length');
-            return true;
-        }
-        globalTransArrayIndex++;
-        return false;
-    }
-
-    function displayNextTransaction() {
-        const finishedTransactions = incrementTransIndex();
-        if (finishedTransactions) {
-            // Move to Next Page: showAnalysesPage();
-            return;
-        }
-        displayCurrentTransaction();
     }
 
     async function displayCategories() {
@@ -52,11 +21,36 @@ var AttachTransactionPage = (()=>{
         $$('id-category-list-container').innerHTML = catStr;
     }
 
-    function displayCurrentTransaction() {
-        const trans = transactionService.getCurrentTransaction();
+    async function startDisplayTransactions(unfilteredTrans) {
+        if (!unfilteredTrans) {
+            console.error(`startDisplayTransactions: Didn't received any unfilteredTrans`); // TODO: Handle Error
+            return; 
+        }
 
-        if (!trans) {
-            console.error("displayCurrentTransaction: Error getting trans"); // Handle Error!            
+        const err = await transactionService.filterTransactions(unfilteredTrans);
+        if (err) {            
+            console.error(err); // TODO: Handle Error
+            return;
+        }
+
+        const currentTransaction = transactionService.getCurrentTransaction();
+        displayTransaction(currentTransaction);
+    }
+
+    async function attachTransaction(name,id) {
+        const cat = {name, id};
+        const body = transactionService.createTransaction(cat);    
+        await http.call("transactions", "POST", body); // Attach the Transaction
+
+        // Display Next Transaction
+        const nextTrans = transactionService.getNextTransaction()
+        displayTransaction(nextTrans);
+    }
+
+    function displayTransaction(trans) {
+        if (!trans) { // End of transactions move to Pie chart Page
+            // Add some Animation
+            NavService.changeSection(null, 'id-view-analyses');
             return;
         }
 

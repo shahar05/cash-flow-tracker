@@ -25,6 +25,17 @@ CREATE TABLE transactions (
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 -- CREATE TABLE transactions (
 --     id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- Auto-generated UUID
 --     external_id VARCHAR(255) UNIQUE NOT NULL,   

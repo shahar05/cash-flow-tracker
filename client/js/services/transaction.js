@@ -26,13 +26,25 @@ const transactionService = (()=>{
         if (res.error) {
             return res.error; 
         }
+        
+        globalTransArrayIndex = 0; // Reset index when new data is assigned
         globalTransArray = res.data;
         return null;
     }
 
+    function getNextTransaction() {
+        ++globalTransArrayIndex;   
+        return getCurrentTransaction();
+    }
+
     function getCurrentTransaction() {
-        if (!globalTransArray || !globalTransArray.length) {
-            console.error('getCurrentTransaction: globalTransArray is null');
+        if (!globalTransArray?.length || globalTransArrayIndex === globalTransArray.length) {
+            // End of Array
+            return null;
+        }
+        
+        if (globalTransArrayIndex > globalTransArray.length) {
+            console.error("getCurrentTransaction: This not should happen - Logic Error");
             return null;
         }
         return globalTransArray[globalTransArrayIndex];
@@ -41,6 +53,7 @@ const transactionService = (()=>{
     return {
         filterTransactions,
         getCurrentTransaction,
+        getNextTransaction,
         createTransaction
     }
 
