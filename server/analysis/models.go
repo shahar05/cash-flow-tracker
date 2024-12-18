@@ -1,13 +1,5 @@
 package analysis
 
-import "time"
-
-// Input struct for date parameters
-type DateParams struct {
-	StartDate time.Time `json:"start_date"`
-	EndDate   time.Time `json:"end_date"`
-}
-
 // Result struct for category and sum
 type CategorySum struct {
 	Name string  `json:"name"`

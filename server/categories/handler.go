@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/shahar05/cash-flow-viewer/utils"
+	"github.com/shahar05/cash-flow-viewer/core"
 )
 
 var DB *sql.DB
@@ -35,7 +35,8 @@ func GetCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("GetCategoriesHandler: sending categories")
-	utils.WriteJSONOk(w, cats)
+
+	core.WriteJSONOk(w, cats)
 }
 
 // AddCategoriesHandler handles POST requests to add a new transaction
@@ -56,5 +57,5 @@ func AddCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("AddCategoriesHandler: Added %d new categories", successfullyInserted)
-	utils.WriteJSONOk(w, map[string]int64{"successfullyInserted": successfullyInserted})
+	core.WriteJSONOk(w, map[string]int64{"successfullyInserted": successfullyInserted})
 }

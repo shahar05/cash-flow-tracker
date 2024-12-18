@@ -2,85 +2,29 @@ package analysis
 
 import (
 	"fmt"
-	"log"
-	"sort"
+	"strings"
 	"time"
 
-	"github.com/shahar05/cash-flow-viewer/categories"
-	"github.com/shahar05/cash-flow-viewer/transactions"
+	"github.com/shahar05/cash-flow-viewer/core"
 )
 
-func GetCategoryAnalysis(categoryName string) ([]transactions.Transaction, error) {
+func GetPieByDate(d *core.DateRange) ([]CategorySum, error) {
 
-	query := `
-    SELECT t.id, t.external_id, t.name, t.amount, t.date, t.address, 
-           t.card_unique_id, t.category_id, t.merchant_phone_no, t.international_branch_id
-    FROM transactions t
-    JOIN categories c ON t.category_id = c.id
-    WHERE c.name = $1;
-    `
-
-	// Prepare to store the result
-	var transArray []transactions.Transaction
-
-	// Execute the query
-	rows, err := DB.Query(query, categoryName)
-	if err != nil {
-		log.Printf("GetTransactionsByCategory: error executing query: %v", err)
-		return nil, err
-	}
-	defer rows.Close()
-
-	// Iterate over the rows
-	for rows.Next() {
-		transaction := transactions.Transaction{Category: &categories.Category{}}
-		err := rows.Scan(
-			&transaction.ID,
-			&transaction.ExternalID,
-			&transaction.Name,
-			&transaction.Amount,
-			&transaction.Date,
-			&transaction.Address,
-			&transaction.CardUniqueId,
-			&transaction.Category.ID,
-			&transaction.MerchantPhoneNo,
-			&transaction.InternationalBranchID,
-		)
-		if err != nil {
-			log.Printf("GetTransactionsByCategory: error scanning row: %v", err)
-			return nil, err
-		}
-		transArray = append(transArray, transaction)
+	dateQuery := ""
+	dateArgs := []interface{}{}
+	if d != nil {
+		dateQuery = `WHERE t.date BETWEEN $1 AND $2`
+		dateArgs = append(dateArgs, d.StartDate)
+		dateArgs = append(dateArgs, d.EndDate)
 	}
 
-	// Check for errors during row iteration
-	if err = rows.Err(); err != nil {
-		log.Printf("GetTransactionsByCategory: error iterating rows: %v", err)
-		return nil, err
-	}
+	query := fmt.Sprintf(` SELECT c.name, SUM(t.amount)
+						   FROM transactions t
+						   JOIN categories c ON t.category_id = c.id
+						   %s
+						   GROUP BY c.name`, dateQuery)
 
-	return transArray, nil
-}
-
-// SQL query to get the sum by category within the date range
-// query := `
-// 	SELECT c.name, SUM(t.amount)
-// 	FROM transactions t
-// 	JOIN categories c ON t.category_id = c.id
-// 	WHERE t.date BETWEEN $1 AND $2
-// 	GROUP BY c.name
-// `
-
-// Function to query the database and return the results
-func GetCategorySums() ([]CategorySum, error) {
-	query := `
-	SELECT c.name, SUM(t.amount)
-	FROM transactions t
-	JOIN categories c ON t.category_id = c.id
-	GROUP BY c.name
-`
-
-	rows, err := DB.Query(query) // , params.StartDate, params.EndDate
+	rows, err := DB.Query(query, dateArgs...) // , params.StartDate, params.EndDate
 	if err != nil {
 		return nil, fmt.Errorf("query error: %w", err)
 	}
@@ -104,187 +48,111 @@ func GetCategorySums() ([]CategorySum, error) {
 	return response, nil
 }
 
-// MonthlyCategoryTransaction represents the structure for a monthly transaction summary by category
-type MonthlyCategoryTransaction struct {
-	Month time.Time // Month is the start date of each month
-	Total float64   // Total is the sum of transactions in that month for the category
-}
+func GetMetric(date *core.DateRange, category string, timePeriodStr string) (*core.Metric, error) {
 
-// GetMonthlyTransactionSumsByCategory retrieves the total transaction amount per month for a specific category over the past year
-func GetMonthlyTransactionSumsByCategory(categoryName string) ([]MonthlyCategoryTransaction, error) {
-	// Get the current time and calculate the date range (last year)
-	now := time.Now()
-	startDate := now.AddDate(-1, 0, 0) // One year ago from today
+	// Validate timePeriodStr using the helper function
+	timePeriod, err := core.ValidateTimePeriod(timePeriodStr)
+	if err != nil {
+		timePeriod = core.Ptr(core.Month) // Set default TimePeriod
+	}
 
-	// SQL query to get the sum of transactions per month for the specified category
-	query := `
-        SELECT 
-            DATE_TRUNC('month', t.date) AS month, 
-            SUM(t.amount) AS total 
-        FROM transactions t
-        JOIN categories c ON t.category_id = c.id
-        WHERE t.date >= $1 AND t.date <= $2
-        AND c.name = $3
-        GROUP BY month
-        ORDER BY month;
-    `
+	// Initialize query arguments
+	queryArgs := []interface{}{*timePeriod}
+
+	// Conditionally add date range and category conditions
+	var conditions []string
+	if date != nil {
+		conditions = append(conditions, "t.date BETWEEN $2 AND $3")
+		queryArgs = append(queryArgs, date.StartDate, date.EndDate)
+	}
+
+	// Correct index for category condition
+	if strings.TrimSpace(category) != "" {
+		// Adjust the argument position dynamically based on existing query args
+		categoryIndex := len(queryArgs) + 1 // +1 because we start with timePeriod at $1
+		conditions = append(conditions, fmt.Sprintf("c.name = $%d", categoryIndex))
+		queryArgs = append(queryArgs, category)
+	}
+
+	// Build the WHERE clause based on conditions
+	whereStr := ""
+	if len(conditions) > 0 {
+		whereStr = "WHERE " + strings.Join(conditions, " AND ")
+	}
+
+	// Build the query using fmt.Sprintf for clarity
+	query := fmt.Sprintf(`
+		SELECT 
+			DATE_TRUNC($1, t.date) AS time_period, 
+			SUM(t.amount) AS total 
+		FROM transactions t
+		JOIN categories c ON t.category_id = c.id
+		%s
+		GROUP BY time_period
+		ORDER BY time_period;
+	`, whereStr)
 
 	// Execute the query
-	rows, err := DB.Query(query, startDate, now, categoryName)
+	rows, err := DB.Query(query, queryArgs...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	// Slice to hold the results
-	var monthlyCategoryTransactions []MonthlyCategoryTransaction
-
-	// Iterate over the result rows
+	// Iterate over the query results
+	var result []core.AggregatedValue
 	for rows.Next() {
-		var month time.Time
+		var period time.Time
 		var total float64
-
-		// Scan the row into variables
-		if err := rows.Scan(&month, &total); err != nil {
+		if err := rows.Scan(&period, &total); err != nil {
 			return nil, err
 		}
-
-		// Append the result to the slice
-		monthlyCategoryTransactions = append(monthlyCategoryTransactions, MonthlyCategoryTransaction{
-			Month: month,
-			Total: total,
+		result = append(result, core.AggregatedValue{
+			Timestamp: period,
+			Value:     total,
 		})
 	}
 
-	// Check for errors after iterating through rows
-	if err = rows.Err(); err != nil {
+	// Check if any error occurred during row iteration
+	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 
-	return monthlyCategoryTransactions, nil
-}
-
-// MonthlyTransaction struct to hold monthly transaction data
-type MonthlyTransaction struct {
-	Month time.Time // Month is the start date of each month
-	Total float64   // Total is the sum of transactions in that month
+	// Return the result
+	return &core.Metric{
+		Period:         *timePeriod,
+		AggregatedData: result,
+	}, nil
 }
 
 // GetMonthlyTransactions function retrieves monthly transaction totals
-func GetMonthlyTransactions() ([]MonthlyTransaction, error) {
-	query := `
-		SELECT DATE_TRUNC('month', date) AS month,
-		       SUM(amount) AS total
-		FROM transactions
-		GROUP BY month
-		ORDER BY month;`
-
-	rows, err := DB.Query(query)
-	if err != nil {
-		return nil, fmt.Errorf("failed to execute query: %w", err)
-	}
-	defer rows.Close()
-
-	var monthlyTransactions []MonthlyTransaction
-
-	for rows.Next() {
-		var mt MonthlyTransaction
-		if err := rows.Scan(&mt.Month, &mt.Total); err != nil {
-			return nil, fmt.Errorf("failed to scan row: %w", err)
-		}
-		monthlyTransactions = append(monthlyTransactions, mt)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("error during row iteration: %w", err)
-	}
-
-	return monthlyTransactions, nil
-}
-
-// func GetMonthlyAnalysis() ([]MonthlyCategorySum, error) {
+// func GetMonthlyTransactions() ([]MonthlyTransaction, error) {
 // 	query := `
-// 	SELECT c.name, TO_CHAR(t.date, 'YYYY-MM') AS month, SUM(t.amount) AS total_sum
-// 	FROM transactions t
-// 	JOIN categories c ON t.category_id = c.id
-// 	GROUP BY c.name, month
-// 	ORDER BY c.name, month
-// 	`
+// 		SELECT DATE_TRUNC('month', date) AS month,
+// 		       SUM(amount) AS total
+// 		FROM transactions
+// 		GROUP BY month
+// 		ORDER BY month;`
 
 // 	rows, err := DB.Query(query)
 // 	if err != nil {
-// 		return nil, fmt.Errorf("query error: %w", err)
+// 		return nil, fmt.Errorf("failed to execute query: %w", err)
 // 	}
 // 	defer rows.Close()
 
-// 	var response []MonthlyCategorySum
+// 	var monthlyTransactions []MonthlyTransaction
 
-// 	// Iterate over the result set
 // 	for rows.Next() {
-// 		var categorySum CategorySum
-// 		if err := rows.Scan(&categorySum.Name, &categorySum.Month, &categorySum.Sum); err != nil {
-// 			return nil, fmt.Errorf("scan error: %w", err)
+// 		var mt MonthlyTransaction
+// 		if err := rows.Scan(&mt.Month, &mt.Total); err != nil {
+// 			return nil, fmt.Errorf("failed to scan row: %w", err)
 // 		}
-// 		response = append(response, categorySum)
+// 		monthlyTransactions = append(monthlyTransactions, mt)
 // 	}
 
-// 	// Check for row errors
 // 	if err := rows.Err(); err != nil {
-// 		return nil, fmt.Errorf("row error: %w", err)
+// 		return nil, fmt.Errorf("error during row iteration: %w", err)
 // 	}
 
-// 	return response, nil
+// 	return monthlyTransactions, nil
 // }
-
-func GetMonthlyAnalysis() ([]MonthlyCategorySum, error) {
-	query := `
-	SELECT TO_CHAR(t.date, 'YYYY-MM') AS month, c.name, SUM(t.amount) AS total_sum
-	FROM transactions t
-	JOIN categories c ON t.category_id = c.id
-	GROUP BY month, c.name
-	ORDER BY month, c.name
-	`
-
-	rows, err := DB.Query(query)
-	if err != nil {
-		return nil, fmt.Errorf("query error: %w", err)
-	}
-	defer rows.Close()
-
-	// Initialize a map to organize results by month
-	monthlySumsMap := make(map[string][]CategorySum)
-
-	// Iterate over the result set and populate the map
-	for rows.Next() {
-		var month string
-		var categorySum CategorySum
-
-		if err := rows.Scan(&month, &categorySum.Name, &categorySum.Sum); err != nil {
-			return nil, fmt.Errorf("scan error: %w", err)
-		}
-
-		// Append the category sum to the appropriate month in the map
-		monthlySumsMap[month] = append(monthlySumsMap[month], categorySum)
-	}
-
-	// Check for any errors encountered during iteration
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("row error: %w", err)
-	}
-
-	// Convert the map into a slice of MonthlyCategorySum objects
-	var response []MonthlyCategorySum
-	for month, categorySumArr := range monthlySumsMap {
-		response = append(response, MonthlyCategorySum{
-			Month:          month,
-			CategorySumArr: categorySumArr,
-		})
-	}
-
-	// Optional: Sort the response by month if needed (e.g., in case map order is unpredictable)
-	sort.Slice(response, func(i, j int) bool {
-		return response[i].Month < response[j].Month
-	})
-
-	return response, nil
-}

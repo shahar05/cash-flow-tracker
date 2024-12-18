@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/shahar05/cash-flow-viewer/categories"
-	"github.com/shahar05/cash-flow-viewer/utils"
+	"github.com/shahar05/cash-flow-viewer/core"
 )
 
 func FilterTransactions(fullTransArr []FullTransDetail) ([]FullTransDetail, error) {
@@ -129,7 +129,7 @@ func createTransFromFullTrans(t *Transaction, ft *FullTransDetail) {
 	t.Amount = ft.AmountForDisplay
 	t.CardUniqueId = &ft.CardUniqueId
 	t.DateStr = ft.TrnPurchaseDate
-	t.Date = utils.ConvertStringToTime(ft.TrnPurchaseDate)
+	t.Date = core.ConvertStringToTime(ft.TrnPurchaseDate)
 	t.InternationalBranchID = ft.InternationalBranchID
 	t.MerchantPhoneNo = &ft.MerchantPhoneNo
 	t.Name = ft.MerchantName

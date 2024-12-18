@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/shahar05/cash-flow-viewer/utils"
+	"github.com/shahar05/cash-flow-viewer/core"
 )
 
 var DB *sql.DB
@@ -36,11 +36,11 @@ func FilterTransactionsHandler(w http.ResponseWriter, r *http.Request) {
 
 	filteredTrans, err := FilterTransactions(body.FullTransArr)
 	if err != nil {
-		utils.WriteJSONError(w, http.StatusInternalServerError, err.Error())
+		core.WriteJSONError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.WriteJSONOk(w, filteredTrans)
+	core.WriteJSONOk(w, filteredTrans)
 }
 
 // GetTransactionsHandler handles GET requests for contacts with pagination
@@ -79,5 +79,5 @@ func AddTransactionsHandler(w http.ResponseWriter, r *http.Request) {
 
 	trans.ID = id
 	log.Printf("AddTransactionsHandler: Added new transaction with ID: %s", id)
-	utils.WriteJSONOk(w, trans)
+	core.WriteJSONOk(w, trans)
 }
